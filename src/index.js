@@ -1,48 +1,68 @@
 const express = require('express');
-
-const app = express();
+const cors = require('cors');
 const http = require('http');
 
-const server = http.createServer(app);
 const { Server } = require('socket.io');
+const authMiddleware = require('./middlewares/auth');
+
+const app = express();
+
+const server = http.createServer(app);
 
 const io = new Server(server);
+// const { Pool } = require('pg');
+
 const config = require('../config');
-// const cors = require('cors');
+const routes = require('./routes');
+const pkg = require('../package.json');
+
+const { socketController } = require('./socket');
 
 // const pkg = require('./package.json');
+/* const pool = new Pool({
+  user: 'postgres',
+  host: 'localhost',
+  password: 'postgres',
+  database: 'postgres',
+}); */
 
-const { port } = config;
+// const insertUser = () => {};
+
+// insertUser();
+
+const { port, secret } = config;
 app.use(express.json());
 app.set('port', port);
+app.set('pkg', pkg);
 
-app.use(express.urlencoded({ extended: true }));
+// middlewares
+app.use(cors());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+app.use(authMiddleware(secret));
+
 // app.use(require('./routes/index'))
-app.use(express.static('public'));
+// app.use(express.static('public'));
 
-app.get('/', (req, res) => {
-  res.send('Hello World');
-});
+// routes
 
-io.on('connection', (socket) => {
-  console.log('a user connected');
+routes(app, (err) => {
+  if (err) {
+    throw err;
+  }
 
-  socket.on('disconnect', () => {
-    console.log('Cliente desonectado', socket.id);
-  });
-  // recibe el emit de fronted
-  socket.on('enviar-mensaje', (payload, callback) => {
-    console.log(payload);
-    // ahora el servidor emite el mensaje a otro cliente
-    // el callback lleva el id al cliente en el emit
-    const id = 1234;
-    callback(id);
-    socket.broadcast.emit('enviar-mensaje', payload);
+  app.listen(port, () => {
+    console.info(`App listening on port ${port}`);
   });
 });
+// app.get('/', (req, res) => {
+// res.send('Hello World');
+// });
 
-const servidor = server.listen(app.get('port'), () => {
-  console.info(`App listening on port ${app.get('port')}`);
-});
+io.on('connection', socketController);
 
-module.exports = { app, servidor };
+// const servidor = server.listen(app.get('port'), () => {
+// console.info(`App listening on port ${app.get('port')}`);
+// });
+
+module.exports = { app };
