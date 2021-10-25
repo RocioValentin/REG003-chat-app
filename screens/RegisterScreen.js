@@ -42,7 +42,6 @@ const RegisterScreen = ({ navigation, route }) => {
     },
     fixToText: {
         flexDirection: 'column',
-        gap: 10,
         padding: 25,
       },
   });

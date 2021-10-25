@@ -23,13 +23,36 @@ const styles = StyleSheet.create({
 import React from "react";
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import {NavigationContainer} from "@react-navigation/native";
+// import io from 'socket.io-client';
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import ChatListScreen from "./screens/ChatListScreen";
 import ChatScreen from "./screens/Chat";
+import io from 'socket.io-client';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+
+  
+  /*const [socket, setSocket] = React.useState('');
+
+  React.useEffect(() => {
+    const newSocket = io(`http://192.168.0.9:3000`);
+    newSocket.on('connect', () => {
+      console.log('conectado');
+    });
+    setSocket(newSocket);
+    return () => newSocket.close();
+  }, [setSocket]); */
+
+
+  /*const socket = io('http://192.168.0.9:3000') 
+  
+  socket.on('connect', () => {
+    console.log('conectado');
+  });*/
+  
+  
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -40,7 +63,9 @@ export default function App() {
         />
         <Stack.Screen name="Register" component= {RegisterScreen} />
         <Stack.Screen name="ChatList" component= {ChatListScreen} />
-        <Stack.Screen name="Chat" component= {ChatScreen} />
+        <Stack.Screen name="Chat" component= {ChatScreen} options={({route})=>({
+          title: route.params.name, 
+        })}/>
       </Stack.Navigator>
     </NavigationContainer>
   )

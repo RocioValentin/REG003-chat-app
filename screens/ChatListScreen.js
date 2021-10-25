@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
+import axios from "axios";
 import {
     Container,
     Card,
@@ -13,71 +14,46 @@ import {
     TextSection,
   } from '../styles/ChatListStyles';
 
-const DATA = [
-    {
-      id: '1',
-      userName: 'Jenny Doe',
-      userImg: '',
-      messageTime: '4 mins ago',
-      messageText:
-        'Hey there, this is my test for a post of my social app in React Native.',
-    },
-    {
-      id: '2',
-      userName: 'John Doe',
-      userImg: '',
-      messageTime: '2 hours ago',
-      messageText:
-        'Hey there, this is my test for a post of my social app in React Native.',
-    },
-    {
-      id: '3',
-      userName: 'Ken William',
-      userImg: '',
-      messageTime: '1 hours ago',
-      messageText:
-        'Hey there, this is my test for a post of my social app in React Native.',
-    },
-    {
-      id: '4',
-      userName: 'Selina Paul',
-      userImg: '',
-      messageTime: '1 day ago',
-      messageText:
-        'Hey there, this is my test for a post of my social app in React Native.',
-    },
-    {
-      id: '5',
-      userName: 'Christy Alex',
-      userImg: '',
-      messageTime: '2 days ago',
-      messageText:
-        'Hey there, this is my test for a post of my social app in React Native.',
-    },
-  ];
 
 const ChatListScreen = ({ navigation, route }) => {
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    const getUsers = async () => {
+      try{
+        const res = await axios.get("http://localhost:3000/users")
+        setUsers(res.data);
+      } catch (err) {
+        console.log(err)
+      }
+    };
+    getUsers();
+  }, [])
+
+  console.log('usuariooos', users)
+
+
     return (
     <Container >
         <FlatList
-        data={DATA}
-        keyExtractor={item => item.id}
+        data={users}
         renderItem={({item}) => (
-            <Card onPress={() => navigation.navigate('Chat', {userName: item.userName})}>
+            <Card onPress={() => navigation.navigate('Chat', {name: item.name})}>
               <UserInfo>
-                <UserImgWrapper>
+              { /*<UserImgWrapper>
                   <UserImg source={item.userImg} />
-                </UserImgWrapper>
+                </UserImgWrapper> */ }
                 <TextSection>
                   <UserInfoText>
-                    <UserName>{item.userName}</UserName>
-                    <PostTime>{item.messageTime}</PostTime>
+                    <UserName>{item.name}</UserName>
+                  { /*  <PostTime>{item.messageTime}</PostTime> */ }
                   </UserInfoText>
-                  <MessageText>{item.messageText}</MessageText>
+                  { /* <MessageText>{item.messageText}</MessageText> */ }
                 </TextSection>
               </UserInfo>
             </Card>
         )}
+        keyExtractor={item => item.id}
         />
         <Text>This is {route.params.name}'s Chat List</Text>
     </Container>

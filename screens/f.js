@@ -12,7 +12,7 @@ const ChatScreen = (props) => {
 
   useEffect(() => {
     
-    const socket = io(`http://192.168.0.10:3000`);
+    const socket = io(`http://192.168.0.9:3000`);
 
     
     socket.on('connect', () => {

@@ -1,39 +1,27 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, ScrollView, Platform } from 'react-native';
 import Task from '../components/Messages';
 import io from 'socket.io-client';
 
 const ChatScreen = (props) => {
+
+  const newSocket = io(`http://192.168.0.10:3000`);
+  newSocket.on('connect', () => {
+    console.log('conectado');
+  });
     
     const [task, setTask] = useState();
-  const [taskItems, setTaskItems] = useState([])
-
-  const [newSocket, setNewSocket] = useState();
-
-  useEffect(() => {
-    
-    const socket = io(`http://192.168.0.10:3000`);
-
-    
-    socket.on('connect', () => {
-      console.log('conectado');
-    });
-
-    socket.on('enviar-mensaje', (payload) => {
-      console.log('sigue vacio??',taskItems, payload)
-      setTaskItems(taskItems.concat(payload))
-    }
-    )
-
-    setNewSocket(socket)
-  }, [])
-
-
+  const [taskItems, setTaskItems] = useState([]);
 
   const handleAddTask = () => {
     Keyboard.dismiss();
     // console.log(task)
     // setTaskItems([...task])
+    newSocket.on('enviar-mensaje', (payload) => {
+      setTaskItems(taskItems.concat(payload))
+      console.log('sigue vacio??',taskItems, payload)
+    }
+    );
 
     const payload = {
       mensaje: task,
