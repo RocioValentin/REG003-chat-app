@@ -54,8 +54,13 @@ module.exports = {
     // const newUser = await pool.query('SELECT * FROM users WHERE name = $1', [
     //  userName,
     // ]);
-    console.log(userName, userPassword);
+    // console.log('helllllo', userName, userPassword);
     return res.json({ message: 'User added succesfully' });
+  },
+  getUsers: async (req, res, next) => {
+    const response = await pool.query('SELECT * FROM users');
+    // console.log(response.rows);
+    return res.status(200).json(response.rows);
   },
 };
 

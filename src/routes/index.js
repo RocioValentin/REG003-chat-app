@@ -1,8 +1,9 @@
 const auth = require('./auth');
 const users = require('./users');
-// const chat = require('./chat');
-// const channel = require('./channel');
-// const channelPrivate = require('./channel-private');
+const message = require('./chat');
+const channelType = require('./channel-type');
+const channel = require('./channel');
+const channelUser = require('./channel-user');
 
 const root = (app, next) => {
   const pkg = app.get('pkg');
@@ -27,4 +28,9 @@ const register = (app, routes, cb) => {
   });
 };
 
-module.exports = (app, next) => register(app, [auth, users, root], next);
+module.exports = (app, next) =>
+  register(
+    app,
+    [auth, users, channelType, channel, message, channelUser, root],
+    next
+  );

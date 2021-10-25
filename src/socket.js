@@ -14,18 +14,18 @@ const socketController = (socket) => {
     console.log('Cliente desonectado', socket.id);
   });
   // recibe el emit de fronted
-  socket.on('enviar-mensaje', async (payload, callback) => {
-    console.log(payload);
+  socket.on('enviar-mensaje', (payload, callback) => {
+    console.log('servidooor', payload);
     // ahora el servidor emite el mensaje a otro cliente
     // el callback lleva el id al cliente en el emit
     const id = 1234;
     callback(id);
     socket.broadcast.emit('enviar-mensaje', payload);
-    const text = 'INSERT INTO users(username, password) VALUES($1,$2)';
-    const values = [payload.mensaje, payload.mensaje];
-    const res = await pool.query(text, values);
-    console.log(res);
-    pool.end();
+    // const text = 'INSERT INTO chats(userId, message) VALUES($1,$2)';
+    // const values = [payload.mensaje, payload.mensaje];
+    // const res = pool.query(text, values);
+    // console.log(res);
+    // pool.end();
   });
 };
 

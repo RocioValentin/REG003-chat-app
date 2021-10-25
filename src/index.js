@@ -9,14 +9,20 @@ const app = express();
 
 const server = http.createServer(app);
 
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST'],
+  },
+});
 // const { Pool } = require('pg');
 
 const config = require('../config');
 const routes = require('./routes');
 const pkg = require('../package.json');
-
 const { socketController } = require('./socket');
+
+// const { socketController } = require('./socket');
 
 // const pkg = require('./package.json');
 /* const pool = new Pool({
@@ -46,20 +52,20 @@ app.use(authMiddleware(secret));
 
 // routes
 
+io.on('connection', socketController);
+
 routes(app, (err) => {
   if (err) {
     throw err;
   }
 
-  app.listen(port, () => {
+  server.listen(port, () => {
     console.info(`App listening on port ${port}`);
   });
 });
 // app.get('/', (req, res) => {
 // res.send('Hello World');
 // });
-
-io.on('connection', socketController);
 
 // const servidor = server.listen(app.get('port'), () => {
 // console.info(`App listening on port ${app.get('port')}`);
